@@ -55,12 +55,6 @@ void FHotkeyEditorModule::ShutdownModule()
 
 TSharedRef<SDockTab> FHotkeyEditorModule::OnSpawnPluginTab(const FSpawnTabArgs& SpawnTabArgs)
 {
-	FText WidgetText = FText::Format(
-		LOCTEXT("WindowWidgetText", "Add code to {0} in {1} to override this window's contents"),
-		FText::FromString(TEXT("FHotkeyEditorModule::OnSpawnPluginTab")),
-		FText::FromString(TEXT("HotkeyEditor.cpp"))
-		);
-
 	return SNew(SDockTab)
 		.TabRole(ETabRole::NomadTab)
 		[
@@ -68,7 +62,7 @@ TSharedRef<SDockTab> FHotkeyEditorModule::OnSpawnPluginTab(const FSpawnTabArgs& 
 			SNew(SVerticalBox)
 			+SVerticalBox::Slot()
 			.AutoHeight()
-			.Padding(5.0f)
+			.Padding(5.0f, 5.0f, 5.0f, 0.0f)
 			[
 				SNew(SSearchBox)
 			]
@@ -80,11 +74,60 @@ TSharedRef<SDockTab> FHotkeyEditorModule::OnSpawnPluginTab(const FSpawnTabArgs& 
 				.Orientation(Orient_Vertical)
 				+SSplitter::Slot()
 				[
-					SNew(SBorder)	
+					SNew(SSplitter)
+					.Orientation(Orient_Horizontal)
+					+SSplitter::Slot()
+					[
+						SAssignNew(ContextViewList, SListView<TSharedPtr<FBindingContext>>)
+						.ItemHeight(24.0f)
+						.HeaderRow(
+							SNew(SHeaderRow)
+							+SHeaderRow::Column("Categories")
+						)
+					]
+					+SSplitter::Slot()
+					[
+						SAssignNew(CommandsViewList, SListView<TSharedPtr<FUICommandInfo>>)
+						.ItemHeight(24.0f)
+						.HeaderRow(
+							SNew(SHeaderRow)
+							+SHeaderRow::Column("Commands")
+						)
+					]
+					+SSplitter::Slot()
+					[
+						SNew(SVerticalBox)
+						+SVerticalBox::Slot()
+						.AutoHeight()
+						[
+							SNew(SHeaderRow)
+							+SHeaderRow::Column("Description").DefaultLabel(FText::FromString("Description"))
+						]
+						+SVerticalBox::Slot()
+						.FillHeight(1.0f)
+						.Padding(5.0f)
+						[
+							SAssignNew(DescriptionTextBlock, STextBlock)
+							.Text(FText::FromString("..."))
+						]
+						+SVerticalBox::Slot()
+						.AutoHeight()
+						[
+							SNew(SHeaderRow)
+							+SHeaderRow::Column("Assign Key").DefaultLabel(FText::FromString("AssignKey"))
+						]
+						+SVerticalBox::Slot()
+						.FillHeight(1.0f)
+						[
+							SNew(SButton)
+							.Text(FText::FromString("Assign Hotkey"))
+						]
+					]
 				]
 				+SSplitter::Slot()
 				[
-					SNew(SBorder)	
+					SNew(SBorder)
+					.BorderImage(FAppStyle::Get().GetBrush("ContentBrowser.TileViewTooltip.ToolTipBorder"))
 				]
 			]
 		];

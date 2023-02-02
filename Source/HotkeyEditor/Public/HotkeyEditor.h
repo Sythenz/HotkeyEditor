@@ -18,6 +18,11 @@ public:
 	
 	/** This function will be bound to Command (by default it will bring up plugin window) */
 	void PluginButtonClicked();
+
+	TSharedPtr<SListView<TSharedPtr<FBindingContext>>> ContextViewList;
+	TSharedPtr<SListView<TSharedPtr<FUICommandInfo>>> CommandsViewList;
+
+	TSharedPtr<STextBlock> DescriptionTextBlock;
 	
 private:
 
