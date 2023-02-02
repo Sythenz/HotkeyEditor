@@ -8,6 +8,7 @@
 #include "Widgets/Layout/SBox.h"
 #include "Widgets/Text/STextBlock.h"
 #include "ToolMenus.h"
+#include "Widgets/Input/SSearchBox.h"
 
 static const FName HotkeyEditorTabName("HotkeyEditor");
 
@@ -64,12 +65,27 @@ TSharedRef<SDockTab> FHotkeyEditorModule::OnSpawnPluginTab(const FSpawnTabArgs& 
 		.TabRole(ETabRole::NomadTab)
 		[
 			// Put your tab content here!
-			SNew(SBox)
-			.HAlign(HAlign_Center)
-			.VAlign(VAlign_Center)
+			SNew(SVerticalBox)
+			+SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(5.0f)
 			[
-				SNew(STextBlock)
-				.Text(WidgetText)
+				SNew(SSearchBox)
+			]
+			+SVerticalBox::Slot()
+			.FillHeight(1.0f)
+			.Padding(5.0f)
+			[
+				SNew(SSplitter)
+				.Orientation(Orient_Vertical)
+				+SSplitter::Slot()
+				[
+					SNew(SBorder)	
+				]
+				+SSplitter::Slot()
+				[
+					SNew(SBorder)	
+				]
 			]
 		];
 }
