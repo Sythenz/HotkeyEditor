@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
 
+class SHotkeyCommandsView;
 class FToolBarBuilder;
 class FMenuBuilder;
 
@@ -18,17 +19,18 @@ public:
 	
 	/** This function will be bound to Command (by default it will bring up plugin window) */
 	void PluginButtonClicked();
-
-	TSharedPtr<SListView<TSharedPtr<FBindingContext>>> ContextViewList;
-	TSharedPtr<SListView<TSharedPtr<FUICommandInfo>>> CommandsViewList;
-
-	TSharedPtr<STextBlock> DescriptionTextBlock;
 	
 private:
 
 	void RegisterMenus();
 
 	TSharedRef<class SDockTab> OnSpawnPluginTab(const class FSpawnTabArgs& SpawnTabArgs);
+	
+	void CollectContexts();
+	void OnSearchChanged(const FText& Filter);
+
+	TArray<TSharedPtr<FBindingContext>> Contexts;
+	TSharedPtr<SHotkeyCommandsView> HotkeyCommandsView;
 
 private:
 	TSharedPtr<class FUICommandList> PluginCommands;

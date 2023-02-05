@@ -8,9 +8,10 @@
 #include "Widgets/Layout/SBox.h"
 #include "Widgets/Text/STextBlock.h"
 #include "ToolMenus.h"
+#include "Widgets/SHotkeyCommandsView.h"
 #include "Widgets/Input/SSearchBox.h"
 
-static const FName HotkeyEditorTabName("HotkeyEditor");
+static const FName HotkeyEditorTabName("Hotkey Editor");
 
 #define LOCTEXT_NAMESPACE "FHotkeyEditorModule"
 
@@ -33,7 +34,7 @@ void FHotkeyEditorModule::StartupModule()
 	UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateRaw(this, &FHotkeyEditorModule::RegisterMenus));
 	
 	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(HotkeyEditorTabName, FOnSpawnTab::CreateRaw(this, &FHotkeyEditorModule::OnSpawnPluginTab))
-		.SetDisplayName(LOCTEXT("FHotkeyEditorTabTitle", "HotkeyEditor"))
+		.SetDisplayName(LOCTEXT("FHotkeyEditorTabTitle", "Hotkey Editor"))
 		.SetMenuType(ETabSpawnerMenuType::Hidden);
 }
 
@@ -55,6 +56,8 @@ void FHotkeyEditorModule::ShutdownModule()
 
 TSharedRef<SDockTab> FHotkeyEditorModule::OnSpawnPluginTab(const FSpawnTabArgs& SpawnTabArgs)
 {
+	CollectContexts();
+	
 	return SNew(SDockTab)
 		.TabRole(ETabRole::NomadTab)
 		[
@@ -62,75 +65,42 @@ TSharedRef<SDockTab> FHotkeyEditorModule::OnSpawnPluginTab(const FSpawnTabArgs& 
 			SNew(SVerticalBox)
 			+SVerticalBox::Slot()
 			.AutoHeight()
-			.Padding(5.0f, 5.0f, 5.0f, 0.0f)
+			.Padding(10.0f, 10.0f, 10.0f, 0.0f)
 			[
 				SNew(SSearchBox)
+				.OnTextChanged_Raw(this, &FHotkeyEditorModule::OnSearchChanged)
 			]
 			+SVerticalBox::Slot()
 			.FillHeight(1.0f)
-			.Padding(5.0f)
+			.Padding(10.0f)
 			[
 				SNew(SSplitter)
 				.Orientation(Orient_Vertical)
 				+SSplitter::Slot()
 				[
-					SNew(SSplitter)
-					.Orientation(Orient_Horizontal)
-					+SSplitter::Slot()
-					[
-						SAssignNew(ContextViewList, SListView<TSharedPtr<FBindingContext>>)
-						.ItemHeight(24.0f)
-						.HeaderRow(
-							SNew(SHeaderRow)
-							+SHeaderRow::Column("Categories")
-						)
-					]
-					+SSplitter::Slot()
-					[
-						SAssignNew(CommandsViewList, SListView<TSharedPtr<FUICommandInfo>>)
-						.ItemHeight(24.0f)
-						.HeaderRow(
-							SNew(SHeaderRow)
-							+SHeaderRow::Column("Commands")
-						)
-					]
-					+SSplitter::Slot()
-					[
-						SNew(SVerticalBox)
-						+SVerticalBox::Slot()
-						.AutoHeight()
-						[
-							SNew(SHeaderRow)
-							+SHeaderRow::Column("Description").DefaultLabel(FText::FromString("Description"))
-						]
-						+SVerticalBox::Slot()
-						.FillHeight(1.0f)
-						.Padding(5.0f)
-						[
-							SAssignNew(DescriptionTextBlock, STextBlock)
-							.Text(FText::FromString("..."))
-						]
-						+SVerticalBox::Slot()
-						.AutoHeight()
-						[
-							SNew(SHeaderRow)
-							+SHeaderRow::Column("Assign Key").DefaultLabel(FText::FromString("AssignKey"))
-						]
-						+SVerticalBox::Slot()
-						.FillHeight(1.0f)
-						[
-							SNew(SButton)
-							.Text(FText::FromString("Assign Hotkey"))
-						]
-					]
+					HotkeyCommandsView.ToSharedRef()
 				]
 				+SSplitter::Slot()
 				[
 					SNew(SBorder)
-					.BorderImage(FAppStyle::Get().GetBrush("ContentBrowser.TileViewTooltip.ToolTipBorder"))
+					.BorderImage(FAppStyle::Get().GetBrush("ColorPicker.MultipleValuesBackground"))
 				]
 			]
 		];
+}
+
+void FHotkeyEditorModule::CollectContexts()
+{
+	FInputBindingManager::Get().GetKnownInputContexts(Contexts);
+
+	//Rebuild our commands view with our new terms
+	HotkeyCommandsView.Reset();
+	HotkeyCommandsView = SNew(SHotkeyCommandsView).InContextListItems(Contexts);
+}
+
+void FHotkeyEditorModule::OnSearchChanged(const FText& Filter)
+{
+	CollectContexts();
 }
 
 void FHotkeyEditorModule::PluginButtonClicked()
