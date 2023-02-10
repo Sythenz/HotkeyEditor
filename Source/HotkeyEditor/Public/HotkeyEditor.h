@@ -25,9 +25,7 @@ private:
 	void RegisterMenus();
 
 	TSharedRef<class SDockTab> OnSpawnPluginTab(const class FSpawnTabArgs& SpawnTabArgs);
-	
-	void CollectContexts();
-	void OnSearchChanged(const FText& Filter);
+	void OnSearchChanged(const FText& Text);
 
 	TArray<TSharedPtr<FBindingContext>> Contexts;
 	TSharedPtr<SHotkeyCommandsView> HotkeyCommandsView;

@@ -8,7 +8,12 @@
 #include "Widgets/Layout/SBox.h"
 #include "Widgets/Text/STextBlock.h"
 #include "ToolMenus.h"
+#include "Chaos/AABB.h"
+#include "Chaos/AABB.h"
+#include "Chaos/AABB.h"
+#include "Chaos/AABB.h"
 #include "Widgets/SHotkeyCommandsView.h"
+#include "Widgets/SKeyboardUI.h"
 #include "Widgets/Input/SSearchBox.h"
 
 static const FName HotkeyEditorTabName("Hotkey Editor");
@@ -55,9 +60,7 @@ void FHotkeyEditorModule::ShutdownModule()
 }
 
 TSharedRef<SDockTab> FHotkeyEditorModule::OnSpawnPluginTab(const FSpawnTabArgs& SpawnTabArgs)
-{
-	CollectContexts();
-	
+{	
 	return SNew(SDockTab)
 		.TabRole(ETabRole::NomadTab)
 		[
@@ -78,29 +81,29 @@ TSharedRef<SDockTab> FHotkeyEditorModule::OnSpawnPluginTab(const FSpawnTabArgs& 
 				.Orientation(Orient_Vertical)
 				+SSplitter::Slot()
 				[
-					HotkeyCommandsView.ToSharedRef()
+					SAssignNew(HotkeyCommandsView, SHotkeyCommandsView)
 				]
 				+SSplitter::Slot()
 				[
 					SNew(SBorder)
 					.BorderImage(FAppStyle::Get().GetBrush("ColorPicker.MultipleValuesBackground"))
+					.Padding(10.0f)
+					.HAlign(HAlign_Center)
+					.VAlign(VAlign_Center)
+					[
+						SNew(SKeyboardUI)
+					]
 				]
 			]
 		];
 }
 
-void FHotkeyEditorModule::CollectContexts()
+void FHotkeyEditorModule::OnSearchChanged(const FText& Text)
 {
-	FInputBindingManager::Get().GetKnownInputContexts(Contexts);
-
-	//Rebuild our commands view with our new terms
-	HotkeyCommandsView.Reset();
-	HotkeyCommandsView = SNew(SHotkeyCommandsView).InContextListItems(Contexts);
-}
-
-void FHotkeyEditorModule::OnSearchChanged(const FText& Filter)
-{
-	CollectContexts();
+	if(HotkeyCommandsView.IsValid())
+	{
+		HotkeyCommandsView->FilterContextsBySearch(Text);
+	}
 }
 
 void FHotkeyEditorModule::PluginButtonClicked()

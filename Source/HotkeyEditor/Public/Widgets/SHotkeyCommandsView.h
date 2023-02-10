@@ -14,19 +14,27 @@ public:
 	SLATE_BEGIN_ARGS(SHotkeyCommandsView)
 		{
 		}
-	SLATE_ARGUMENT(TArray<TSharedPtr<FBindingContext>>, InContextListItems)
-	
 	SLATE_END_ARGS()
-
+	
 	/** Constructs this widget with InArgs */
 	void Construct(const FArguments& InArgs);
+	void FilterContextsBySearch(FText InTerm);
+
+	FString SearchTerm;
+
+	/* Context items filtered by search term, this gets displayed in the contexts list. */
+	TArray<TSharedPtr<FBindingContext>> FilteredContexts;
+
+	TArray<TSharedPtr<FBindingContext>> Contexts;
 	
 	TSharedPtr<SListView<TSharedPtr<FBindingContext>>> ContextViewList;
 	TSharedPtr<SListView<TSharedPtr<FUICommandInfo>>> CommandsViewList;
-
-	TArray<TSharedPtr<FBindingContext>> ContextsListItems;
-	TArray<TSharedPtr<FUICommandInfo>> CommandsListItems;
-
+	
+	/* Command items filtered by search term, this gets displayed in the contexts list. */
+	TArray<TSharedPtr<FUICommandInfo>> FilteredCommands;
+	
+	TArray<TSharedPtr<FUICommandInfo>> Commands;
+	
 	TSharedRef<ITableRow> MakeContextsListRow(TSharedPtr<FBindingContext> Item, const TSharedRef<STableViewBase>& OwnerTable);
 	TSharedRef<ITableRow> MakeCommandsListRow(TSharedPtr<FUICommandInfo> Item, const TSharedRef<STableViewBase>& OwnerTable);
 	void UpdateCommandsListFromContext(TSharedPtr<FBindingContext> InSelectedItem, ESelectInfo::Type SelectInfo);
