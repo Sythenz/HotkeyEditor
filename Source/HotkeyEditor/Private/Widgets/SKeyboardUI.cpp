@@ -11,8 +11,30 @@ void SKeyboardUI::Construct(const FArguments& InArgs)
 {
 	ChildSlot
 	[
-		SNew(SBorder)
+		SNew(SHorizontalBox)
+		+SHorizontalBox::Slot()
+		.FillWidth(0.45f)
+		[
+			SNew(SBorder)
+		]
+		+SHorizontalBox::Slot()
+		.FillWidth(0.25f)
+		[
+			SNew(SBorder)
+			//KeyboardLayout.CenterKeyboard.ToSharedRef()
+		]
+		+SHorizontalBox::Slot()
+		.FillWidth(0.3f)
+		[
+			SNew(SBorder)
+			//KeyboardLayout.RightKeyboard.ToSharedRef()
+		]
 	];
+}
+
+void SKeyboardUI::PopulateKeyWidgets()
+{
+	
 }
 
 END_SLATE_FUNCTION_BUILD_OPTIMIZATION

@@ -128,7 +128,7 @@ TSharedRef<ITableRow> SHotkeyCommandsView::MakeContextsListRow(TSharedPtr<FBindi
 	const FString CategoryName = FName::NameToDisplayString(Item.Get()->GetContextName().ToString(), false);
 	
 	return
-		SNew(STableRow< TSharedRef<FText> >, OwnerTable)
+		SNew(STableRow< TSharedRef<FBindingContext> >, OwnerTable)
 		.Padding(8.0f)
 		[
 			SNew(STextBlock).Text(FText::FromString(CategoryName))
@@ -143,7 +143,7 @@ TSharedRef<ITableRow> SHotkeyCommandsView::MakeCommandsListRow(TSharedPtr<FUICom
 	const FMargin HasCommand = (Command != "") ? FMargin(4.0f, 0.0f, 0.0f, 0.0f) : FMargin(0.0f, 0.0f, 0.0f, 0.0f);
 
 	return
-		SNew(STableRow< TSharedRef<FText> >, OwnerTable)
+		SNew(STableRow< TSharedRef<FUICommandInfo> >, OwnerTable)
 		.Padding(8.0f)
 		[
 			SNew(SHorizontalBox)
@@ -204,7 +204,8 @@ void SHotkeyCommandsView::UpdateCommandsListFromContext(TSharedPtr<FBindingConte
 	{
 		FilteredCommands = Commands;
 	}
-	
+
+	CommandsViewList->ClearSelection();
 	CommandsViewList->RebuildList();
 }
 

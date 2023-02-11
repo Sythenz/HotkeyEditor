@@ -3,6 +3,9 @@
 #include "HotkeyEditor.h"
 #include "HotkeyEditorStyle.h"
 #include "HotkeyEditorCommands.h"
+#include "ISettingsModule.h"
+#include "ISettingsSection.h"
+#include "KeyboardLayoutSettings.h"
 #include "LevelEditor.h"
 #include "Widgets/Docking/SDockTab.h"
 #include "Widgets/Layout/SBox.h"
@@ -41,6 +44,8 @@ void FHotkeyEditorModule::StartupModule()
 	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(HotkeyEditorTabName, FOnSpawnTab::CreateRaw(this, &FHotkeyEditorModule::OnSpawnPluginTab))
 		.SetDisplayName(LOCTEXT("FHotkeyEditorTabTitle", "Hotkey Editor"))
 		.SetMenuType(ETabSpawnerMenuType::Hidden);
+
+	RegisterSettings();
 }
 
 void FHotkeyEditorModule::ShutdownModule()
@@ -56,7 +61,28 @@ void FHotkeyEditorModule::ShutdownModule()
 
 	FHotkeyEditorCommands::Unregister();
 
+	DeregisterSettings();
+
 	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(HotkeyEditorTabName);
+}
+
+void FHotkeyEditorModule::RegisterSettings()
+{
+	if(ISettingsModule* SettingsModule = FModuleManager::GetModulePtr<ISettingsModule>("Settings"))
+	{
+		ISettingsSectionPtr SettingsSection = SettingsModule->RegisterSettings("Project", "Plugins", "HotkeyEditor",
+			NSLOCTEXT("HotkeyEditor", "HotkeyEditorSettingsName", "Hotkey Editor"),
+			NSLOCTEXT("HotkeyEditor", "HotkeyEditorDescription", "Configure Hotkey Editor Layouts"),
+			GetMutableDefault<UKeyboardLayoutSettings>());
+	}
+}
+
+void FHotkeyEditorModule::DeregisterSettings()
+{
+	if (ISettingsModule* SettingsModule = FModuleManager::GetModulePtr<ISettingsModule>("Settings"))
+	{
+		SettingsModule->UnregisterSettings("Project", "Plugins", "HotkeyEditor");
+	}
 }
 
 TSharedRef<SDockTab> FHotkeyEditorModule::OnSpawnPluginTab(const FSpawnTabArgs& SpawnTabArgs)

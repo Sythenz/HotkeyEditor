@@ -19,4 +19,5 @@ public:
 
 	/** Constructs this widget with InArgs */
 	void Construct(const FArguments& InArgs);
+	void PopulateKeyWidgets();
 };
