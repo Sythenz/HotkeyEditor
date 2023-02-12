@@ -33,7 +33,8 @@ public:
 	/* Command items filtered by search term, this gets displayed in the contexts list. */
 	TArray<TSharedPtr<FUICommandInfo>> FilteredCommands;
 	
-	TArray<TSharedPtr<FUICommandInfo>> Commands;
+	/* Current visible commands list from the context (used by keyboard UI) */
+	TArray<TSharedPtr<FUICommandInfo>> CurrentCommandsList;
 	
 	TSharedRef<ITableRow> MakeContextsListRow(TSharedPtr<FBindingContext> Item, const TSharedRef<STableViewBase>& OwnerTable);
 	TSharedRef<ITableRow> MakeCommandsListRow(TSharedPtr<FUICommandInfo> Item, const TSharedRef<STableViewBase>& OwnerTable);

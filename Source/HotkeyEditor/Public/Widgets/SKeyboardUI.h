@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "KeyboardLayoutSettings.h"
 #include "Widgets/SCompoundWidget.h"
 
 /**
@@ -19,5 +20,11 @@ public:
 
 	/** Constructs this widget with InArgs */
 	void Construct(const FArguments& InArgs);
-	void PopulateKeyWidgets();
+	void PopulateKeyWidgets(TArray<FKeyboardRow> Keyboard, TSharedPtr<SVerticalBox> KeyboardWidget) const;
+
+	TSharedPtr<SVerticalBox> LeftWidget;
+	TSharedPtr<SVerticalBox> CenterWidget;
+	TSharedPtr<SVerticalBox> RightWidget;
+
+	UKeyboardLayoutSettings* KeyboardSettings;
 };

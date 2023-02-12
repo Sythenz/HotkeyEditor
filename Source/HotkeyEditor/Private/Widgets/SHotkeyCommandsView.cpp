@@ -186,23 +186,24 @@ void SHotkeyCommandsView::UpdateCommandsListFromContext(TSharedPtr<FBindingConte
 {
 	if(!InSelectedItem.IsValid()) return;
 
-	FInputBindingManager::Get().GetCommandInfosFromContext(InSelectedItem.Get()->GetContextName(), Commands);
+	CurrentCommandsList.Empty();
+	FInputBindingManager::Get().GetCommandInfosFromContext(InSelectedItem.Get()->GetContextName(), CurrentCommandsList);
 
 	if(SearchTerm != "")
 	{
 		FilteredCommands.Empty();
 		
-		for(int32 i = 0; i < Commands.Num(); i++)
+		for(int32 i = 0; i < CurrentCommandsList.Num(); i++)
 		{
-			if(Commands[i].Get()->GetCommandName().ToString().Contains(SearchTerm))
+			if(CurrentCommandsList[i].Get()->GetCommandName().ToString().Contains(SearchTerm))
 			{
-				FilteredCommands.Add(Commands[i]);
+				FilteredCommands.Add(CurrentCommandsList[i]);
 			}
 		}
 	}
 	else
 	{
-		FilteredCommands = Commands;
+		FilteredCommands = CurrentCommandsList;
 	}
 
 	CommandsViewList->ClearSelection();

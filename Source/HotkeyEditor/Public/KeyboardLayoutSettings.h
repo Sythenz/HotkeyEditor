@@ -64,4 +64,5 @@ class HOTKEYEDITOR_API UKeyboardLayoutSettings : public UObject
 public:
 	UPROPERTY(Config, EditAnywhere, Category = "General")
 	FKeyboardLayout KeyboardLayout;
+
 };
